@@ -1,0 +1,21 @@
+# Build output
+/build
+
+# Some more output
+/data/locale/gui/messages.pot
+/data/locale/messages.pot
+
+# Jam generated files
+/Jamconfig
+/aclocal.m4
+/autom4te.cache/
+
+/config.h
+/config.log
+/config.status
+
+/xmlgettext
+
+# ignoring executables
+/lincity-ng
+/lincity-xg
