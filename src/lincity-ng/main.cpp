@@ -521,6 +521,7 @@ void parseCommandLine(int argc, char** argv)
 
 int main(int argc, char** argv)
 {
+	printf("LinCity started\n");
     int result = 0;
 
 #ifndef DEBUG //in debug mode we wanna have a backtrace

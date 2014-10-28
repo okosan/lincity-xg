@@ -10,7 +10,7 @@ SPACER_SHOW=sudo apt-get moo
 
 default:
 	@echo ""
-	@echo "Please type: requirements, configure, all, help"
+	@echo "Please type: requirements, configure, all, help, dbg, rel"
 
 help:
 	@echo ""
@@ -39,6 +39,13 @@ requirements-xg:
 configure:
 	./autogen.sh
 	./configure
+
+# no difference at the moment
+dbg:
+	jam
+	
+rel:
+	jam
 
 all:
 	jam
