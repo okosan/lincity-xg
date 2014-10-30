@@ -34,10 +34,12 @@ TextureManagerGL::~TextureManagerGL()
 {
 }
 
-static int powerOfTwo(int val) {
-    int result = 1;
+static int powerOfTwo(unsigned int val)
+{
+    // returns nearest closest lesser power of two aligned value
+    unsigned int result = 1;
     while(result < val)
-        result *= 2;
+        result *= 2U;
     return result;
 }
 

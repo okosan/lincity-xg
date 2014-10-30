@@ -1,20 +1,20 @@
 /*
-Copyright (C) 2005 Matthias Braun <matze@braunis.de>
+ Copyright (C) 2005 Matthias Braun <matze@braunis.de>
 
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2 of the License, or
+ (at your option) any later version.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 #include <config.h>
 
 #include <iostream>
@@ -60,7 +60,8 @@ bool restart = false;
 
 void initPhysfs(const char* argv0)
 {
-    if(!PHYSFS_init(argv0)) {
+    if (!PHYSFS_init(argv0))
+    {
         std::stringstream msg;
         msg << "Couldn't initialize physfs: " << PHYSFS_getLastError();
         throw std::runtime_error(msg.str());
@@ -76,24 +77,27 @@ void initPhysfs(const char* argv0)
     // Set configuration directory
     //sprintf(writedir, "%s.%s", userdir, application);
     sprintf(writedir, "%s%s", userdir, application);
-    if(!PHYSFS_setWriteDir(writedir)) {
+    if (!PHYSFS_setWriteDir(writedir))
+    {
         // try to create the directory
         char* mkdir = new char[strlen(application) + 2];
         sprintf(mkdir, "%s", application);
-        if(!PHYSFS_setWriteDir(userdir) || !PHYSFS_mkdir(mkdir)) {
+        if (!PHYSFS_setWriteDir(userdir) || !PHYSFS_mkdir(mkdir))
+        {
             std::ostringstream msg;
-            msg << "Failed creating configuration directory '" <<
-                writedir << "': " << PHYSFS_getLastError();
+            msg << "Failed creating configuration directory '" << writedir
+                    << "': " << PHYSFS_getLastError();
             delete[] writedir;
             delete[] mkdir;
             throw std::runtime_error(msg.str());
         }
         delete[] mkdir;
 
-        if(!PHYSFS_setWriteDir(writedir)) {
+        if (!PHYSFS_setWriteDir(writedir))
+        {
             std::ostringstream msg;
-            msg << "Failed to use configuration directory '" <<
-                writedir << "': " << PHYSFS_getLastError();
+            msg << "Failed to use configuration directory '" << writedir
+                    << "': " << PHYSFS_getLastError();
             delete[] writedir;
             throw std::runtime_error(msg.str());
         }
@@ -105,7 +109,7 @@ void initPhysfs(const char* argv0)
     PHYSFS_addToSearchPath(writedir, 1);
     delete[] writedir;
 
-  //TODO: add zips later
+    //TODO: add zips later
     // Search for archives and add them to the search path
     const char* archiveExt = "zip";
     char** rc = PHYSFS_enumerateFiles("/");
@@ -113,11 +117,14 @@ void initPhysfs(const char* argv0)
 //TODO sort .zip files! so we are sure which patch is first.
 //and change all file access to physfs. what does PHYSFS_getRealDir
 //do when file in in archive?
-    for(char** i = rc; *i != 0; ++i) {
+    for (char** i = rc; *i != 0; ++i)
+    {
         size_t l = strlen(*i);
-        if((l > extlen) && ((*i)[l - extlen - 1] == '.')) {
+        if ((l > extlen) && ((*i)[l - extlen - 1] == '.'))
+        {
             const char* ext = (*i) + (l - extlen);
-            if(strcasecmp(ext, archiveExt) == 0) {
+            if (strcasecmp(ext, archiveExt) == 0)
+            {
                 const char* d = PHYSFS_getRealDir(*i);
                 char* str = new char[strlen(d) + strlen(dirsep) + l + 1];
                 sprintf(str, "%s%s%s", d, dirsep, *i);
@@ -134,14 +141,17 @@ void initPhysfs(const char* argv0)
     dir += "data";
     std::ostringstream testfname;
     //TODO: Windows/Mingw does not like this test on other machine?
-    testfname << dir << dirsep << "images" << dirsep << "tiles" << dirsep << "images.xml";
+    testfname << dir << dirsep << "images" << dirsep << "tiles" << dirsep
+            << "images.xml";
     FILE* f = fopen(testfname.str().c_str(), "r");
-    if(f) {
+    if (f)
+    {
         fclose(f);
-        if(!PHYSFS_addToSearchPath(dir.c_str(), 1)) {
+        if (!PHYSFS_addToSearchPath(dir.c_str(), 1))
+        {
 #ifdef DEBUG
             std::cout << "Warning: Couldn't add '" << dir <<
-                "' to physfs searchpath: " << PHYSFS_getLastError() << "\n";
+            "' to physfs searchpath: " << PHYSFS_getLastError() << "\n";
 #endif
         }
     }
@@ -150,7 +160,8 @@ void initPhysfs(const char* argv0)
     std::string datadir;
 #ifdef ENABLE_BINRELOC
     BrInitError error;
-    if (br_init (&error) == 0 && error != BR_INIT_ERROR_DISABLED) {
+    if (br_init (&error) == 0 && error != BR_INIT_ERROR_DISABLED)
+    {
         printf ("Warning: BinReloc failed to initialize (error code %d)\n",
                 error);
         printf ("Will fallback to hardcoded default path.\n");
@@ -164,9 +175,10 @@ void initPhysfs(const char* argv0)
     datadir = APPDATADIR;
 #endif
 
-    if(!PHYSFS_addToSearchPath(datadir.c_str(), 1)) {
-        std::cout << "Couldn't add '" << datadir
-            << "' to physfs searchpath: " << PHYSFS_getLastError() << "\n";
+    if (!PHYSFS_addToSearchPath(datadir.c_str(), 1))
+    {
+        std::cout << "Couldn't add '" << datadir << "' to physfs searchpath: "
+                << PHYSFS_getLastError() << "\n";
     }
 #endif
 
@@ -174,13 +186,16 @@ void initPhysfs(const char* argv0)
     PHYSFS_permitSymbolicLinks(1);
 
     //show search Path
-    for(char** i = PHYSFS_getSearchPath(); *i != NULL; i++)
-    {   printf("[%s] is in the search path.\n", *i);}
+    for (char** i = PHYSFS_getSearchPath(); *i != NULL; i++)
+    {
+        printf("[%s] is in the search path.\n", *i);
+    }
     //show write directory
     printf("[%s] is the write directory.\n", PHYSFS_getWriteDir());
 }
 
-void musicHalted() {
+void musicHalted()
+{
     getSound()->changeTrack(NEXT_OR_FIRST_TRACK);
     //FIXME: options menu song entry doesn't update while song changes.
 }
@@ -192,40 +207,44 @@ void initVideo(int width, int height)
     const SDL_VideoInfo* VideoInfo;
 
 #ifdef DEBUG
+    const size_t BUFFER_SIZE = 256;
 
-    #define BUFFER_SIZE 256
     char myBuffer[BUFFER_SIZE];
     SDL_Rect** modes;
     int i;
 
-
     // Obtain the video driver name
-    if (SDL_VideoDriverName(myBuffer, BUFFER_SIZE) != NULL) {
+    if (SDL_VideoDriverName(myBuffer, BUFFER_SIZE) != NULL)
+    {
         std::cout << "\nThe video driver name is " << myBuffer << std::endl;
-    } else {
+    }
+    else
+    {
         std::cerr << "\nFailed to obtain the video driver name." << std::endl;
     }
-
 
     /* Get available fullscreen/hardware modes */
     modes = SDL_ListModes(NULL, SDL_FULLSCREEN|SDL_HWSURFACE);
 
     /* Check if there are any modes available */
-    if (modes == (SDL_Rect**)0) {
+    if (modes == (SDL_Rect**)0)
+    {
         printf("No modes available!\n");
         exit(-1);
     }
 
     /* Check if our resolution is restricted */
-    if (modes == (SDL_Rect**)-1) {
+    if (modes == (SDL_Rect**)-1)
+    {
         printf("All resolutions available.\n");
-    } else {
+    }
+    else
+    {
         /* Print valid modes */
         printf("Available Modes\n");
         for (i=0; modes[i]; ++i)
-            printf("  %d x %d\n", modes[i]->w, modes[i]->h);
+        printf("  %d x %d\n", modes[i]->w, modes[i]->h);
     }
-
 
     // more info on BEST Video Mode as we request these information *before* calling SDL_SetVideoMode
     VideoInfo = SDL_GetVideoInfo();
@@ -240,7 +259,8 @@ void initVideo(int width, int height)
 
 #endif
 
-    if( getConfig()->useOpenGL ){
+    if (getConfig()->useOpenGL)
+    {
         flags = SDL_OPENGL | SDL_RESIZABLE;
         SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
         SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 1);
@@ -248,32 +268,36 @@ void initVideo(int width, int height)
         SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 1);
         //SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 0);
         //SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
-    } else {
+    }
+    else
+    {
         flags = SDL_HWSURFACE | SDL_RESIZABLE | SDL_DOUBLEBUF;
     }
-    if(getConfig()->useFullScreen)
+    if (getConfig()->useFullScreen)
         flags |= SDL_FULLSCREEN;
 
-    SDL_Surface* screen
-        = SDL_SetVideoMode(width, height, bpp, flags);
+    SDL_Surface* screen = SDL_SetVideoMode(width, height, bpp, flags);
 
-    if(!screen && (width > 1024 || height > 768 )){
+    if (!screen && (width > 1024 || height > 768))
+    {
         screen = SDL_SetVideoMode(1024, 768, bpp, flags);
         std::cerr << "* Fallback to 1024x768.\n";
     }
-    if(!screen && (width > 800 || height > 600 )){
+    if (!screen && (width > 800 || height > 600))
+    {
         screen = SDL_SetVideoMode(800, 600, bpp, flags);
         std::cerr << "* Fallback to 800x600.\n";
     }
 
     SDL_WM_SetCaption(PACKAGE_NAME " " PACKAGE_VERSION, 0);
-    if(!screen) {
+    if (!screen)
+    {
         std::stringstream msg;
-        msg << "Couldn't set video mode ("
-            << width << "x" << height
-            << "-" << bpp << "bpp) : " << SDL_GetError() << std::endl;
+        msg << "Couldn't set video mode (" << width << "x" << height << "-"
+                << bpp << "bpp) : " << SDL_GetError() << std::endl;
 
-        if(getConfig()->useOpenGL) {
+        if (getConfig()->useOpenGL)
+        {
             std::cerr << "* Fallback to SDL mode.\n";
             getConfig()->useOpenGL = false;
             initVideo(getConfig()->videoX, getConfig()->videoY); //width, height
@@ -282,17 +306,20 @@ void initVideo(int width, int height)
         throw std::runtime_error(msg.str());
     }
 
-    if(painter)
+    if (painter)
     {
         delete painter;
         painter = 0;
     }
     VideoInfo = SDL_GetVideoInfo();
-    if( getConfig()->useOpenGL ){
+    if (getConfig()->useOpenGL)
+    {
+        printf("OpenGL renderer");
+
         glDisable(GL_DEPTH_TEST);
         glDisable(GL_CULL_FACE);
 
-        glClearColor(0, 0, 0, 0);
+        glClearColor(0.5f, 0.5f, 0, 0);
         glViewport(0, 0, screen->w, screen->h);
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
@@ -301,26 +328,35 @@ void initVideo(int width, int height)
         glLoadIdentity();
         glOrtho(0, screen->w, screen->h, 0, -1, 1);
 
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(
+                GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT
+                        | GL_STENCIL_BUFFER_BIT);
 
         painter = new PainterGL();
         std::cout << "\nOpenGL Mode " << VideoInfo->current_w;
         std::cout << "x" << VideoInfo->current_h << "\n";
-    } else {
+    }
+    else
+    {
         painter = new PainterSDL(screen);
         std::cout << "\nSDL Mode " << VideoInfo->current_w;
-        std::cout << "x"<< VideoInfo->current_h <<"\n";
+        std::cout << "x" << VideoInfo->current_h << "\n";
     }
 
-    if(texture_manager == 0) {
-        if( getConfig()->useOpenGL ) {
+    if (texture_manager == 0)
+    {
+        if (getConfig()->useOpenGL)
+        {
             texture_manager = new TextureManagerGL();
-        } else {
+        }
+        else
+        {
             texture_manager = new TextureManagerSDL();
         }
     }
 
-    if(fontManager == 0) {
+    if (fontManager == 0)
+    {
         fontManager = new FontManager();
     }
 
@@ -343,13 +379,16 @@ void initVideo(int width, int height)
 void checkGlErrors()
 {
     GLenum glerror = glGetError();
-    if( glerror == GL_NO_ERROR ){
+    if (glerror == GL_NO_ERROR)
+    {
         return;
     }
     std::cerr << "glGetError reports";
-    while( glerror != GL_NO_ERROR ){
+    while (glerror != GL_NO_ERROR)
+    {
         std::cerr << " ";
-        switch( glerror ){
+        switch (glerror)
+        {
             case GL_INVALID_ENUM:
                 std::cerr << "GL_INVALID_ENUM";
                 break;
@@ -379,13 +418,19 @@ void checkGlErrors()
     std::cerr << "\n";
 }
 
+#include <GL/gl.h>
+
 void flipScreenBuffer()
 {
-    if( getConfig()->useOpenGL ){
+    if (getConfig()->useOpenGL)
+    {
         checkGlErrors();
+        glFlush();
         SDL_GL_SwapBuffers();
         //glClear(GL_COLOR_BUFFER_BIT);
-    } else {
+    }
+    else
+    {
         SDL_Flip(SDL_GetVideoSurface());
     }
 }
@@ -397,35 +442,39 @@ void mainLoop()
     MainState state = MAINMENU;
     MainState nextstate;
 
-    while(state != QUIT)
+    while (state != QUIT)
     {
-        switch(state)
+        switch (state)
         {
             case MAINMENU:
+            {
+                if (menu.get() == 0)
                 {
-                    if(menu.get() == 0)
-                    {   menu.reset(new MainMenu());}
-                    nextstate = menu->run();
+                    menu.reset(new MainMenu());
                 }
+                nextstate = menu->run();
+            }
                 break;
             case INGAME:
+            {
+                if (game.get() == 0)
                 {
-                    if(game.get() == 0)
-                    {
-                        game.reset(new Game());
+                    game.reset(new Game());
 
-                        while(!LCPBarPage1 || !LCPBarPage2)
-                        {//wait until PBars exist so they can be initalized
-                            printf(".");
-                            SDL_Delay(100);
-                        }
+                    while (!LCPBarPage1 || !LCPBarPage2)
+                    { //wait until PBars exist so they can be initalized
+                        printf(".");
+                        SDL_Delay(100);
                     }
-                    nextstate = game->run();
-                    if(menu.get() == 0)
-                    {    menu.reset(new MainMenu());}
-                    menu->gotoMainMenu();
-
                 }
+                nextstate = game->run();
+                if (menu.get() == 0)
+                {
+                    menu.reset(new MainMenu());
+                }
+                menu->gotoMainMenu();
+
+            }
                 break;
             case RESTART:
                 restart = true;
@@ -440,79 +489,111 @@ void mainLoop()
 
 void parseCommandLine(int argc, char** argv)
 {
-    for(int currentArgument = 1; currentArgument < argc; ++currentArgument) {
+    for (int currentArgument = 1; currentArgument < argc; ++currentArgument)
+    {
         std::string argStr = argv[currentArgument];
 
-        if(argStr == "-v" || argStr == "--version") {
+        if (argStr == "-v" || argStr == "--version")
+        {
             std::cout << PACKAGE_NAME << " version " << PACKAGE_VERSION << "\n";
             exit(0);
-        } else  if(argStr == "-h" || argStr == "--help") {
+        }
+        else if (argStr == "-h" || argStr == "--help")
+        {
             std::cout << PACKAGE_NAME << " version " << PACKAGE_VERSION << "\n";
             std::cout << "Command line overrides configfiles.\n";
             std::cout << "Known arguments are:\n";
-            std::cout << "-v           --version         show version and exit\n";
-            std::cout << "-h           --help            show this text and exit\n";
+            std::cout
+                    << "-v           --version         show version and exit\n";
+            std::cout
+                    << "-h           --help            show this text and exit\n";
             std::cout << "-g           --gl              use OpenGL\n";
             std::cout << "-s           --sdl             use SDL\n";
-            std::cout << "-S [size]    --size [size]     specify screensize (eg. -S 1024x768)\n";
+            std::cout
+                    << "-S [size]    --size [size]     specify screensize (eg. -S 1024x768)\n";
             std::cout << "-w           --window          run in window\n";
             std::cout << "-f           --fullscreen      run fullscreen\n";
             std::cout << "-m           --mute            mute audio\n";
-            std::cout << "-q [delay]   --quick [delay]   Setting for fast speed (current " \
-                                                                << getConfig()->quickness \
-                                                                << ")\n";
-            std::cout << "                               -q 9 skips animation steps for speed.\n";
-            std::cout << "                               -q 8 is the slowest speed with full animation.\n";
-            std::cout << "                               -q 1 is fastest. It may heat your hardware!\n";
+            std::cout
+                    << "-q [delay]   --quick [delay]   Setting for fast speed (current "
+                    << getConfig()->quickness << ")\n";
+            std::cout
+                    << "                               -q 9 skips animation steps for speed.\n";
+            std::cout
+                    << "                               -q 8 is the slowest speed with full animation.\n";
+            std::cout
+                    << "                               -q 1 is fastest. It may heat your hardware!\n";
             exit(0);
-        } else if(argStr == "-g" || argStr == "--gl") {
+        }
+        else if (argStr == "-g" || argStr == "--gl")
+        {
             getConfig()->useOpenGL = true;
-        } else if(argStr == "-s" || argStr == "--sdl") {
+        }
+        else if (argStr == "-s" || argStr == "--sdl")
+        {
             getConfig()->useOpenGL = false;
-        } else if(argStr == "-S" || argStr == "--size") {
+        }
+        else if (argStr == "-S" || argStr == "--size")
+        {
             currentArgument++;
-            if(currentArgument >= argc) {
+            if (currentArgument >= argc)
+            {
                 std::cerr << "Error: --size needs a parameter.\n";
                 exit(1);
             }
             argStr = argv[currentArgument];
             int newX, newY, count;
-            count = sscanf( argStr.c_str(), "%ix%i", &newX, &newY );
-            if( count != 2  ) {
+            count = sscanf(argStr.c_str(), "%ix%i", &newX, &newY);
+            if (count != 2)
+            {
                 std::cerr << "Error: Can not parse --size parameter.\n";
-                exit( 1 );
+                exit(1);
             }
-            if(newX <= 0 || newY <= 0) {
+            if (newX <= 0 || newY <= 0)
+            {
                 std::cerr << "Error: Size parameter out of range.\n";
                 exit(1);
             }
             getConfig()->videoX = newX;
             getConfig()->videoY = newY;
-        } else if(argStr == "-f" || argStr == "--fullscreen") {
+        }
+        else if (argStr == "-f" || argStr == "--fullscreen")
+        {
             getConfig()->useFullScreen = true;
-        } else if(argStr == "-w" || argStr == "--window") {
+        }
+        else if (argStr == "-w" || argStr == "--window")
+        {
             getConfig()->useFullScreen = false;
-        } else if(argStr == "-m" || argStr == "--mute") {
+        }
+        else if (argStr == "-m" || argStr == "--mute")
+        {
             getConfig()->soundEnabled = false;
             getConfig()->musicEnabled = false;
-        } else if (argStr == "-q" || argStr == "--quick") {
+        }
+        else if (argStr == "-q" || argStr == "--quick")
+        {
             currentArgument++;
-            if(currentArgument >= argc) {
+            if (currentArgument >= argc)
+            {
                 std::cerr << "Error: --quick needs a parameter.\n";
                 exit(1);
             }
             //fast_time_for_year
             argStr = argv[currentArgument];
             int newSpeed;
-            sscanf( argStr.c_str(), "%i", &newSpeed );
-            if ( newSpeed < 1 || newSpeed > 9 ) {
-                fprintf(stderr, " --quick = %i out of range (1..9). Will use default value %i\n", \
-                                newSpeed, FAST_TIME_FOR_YEAR);
+            sscanf(argStr.c_str(), "%i", &newSpeed);
+            if (newSpeed < 1 || newSpeed > 9)
+            {
+                fprintf(stderr,
+                        " --quick = %i out of range (1..9). Will use default value %i\n",
+                        newSpeed, FAST_TIME_FOR_YEAR);
                 newSpeed = FAST_TIME_FOR_YEAR;
             }
             getConfig()->quickness = newSpeed;
 
-        } else {
+        }
+        else
+        {
             std::cerr << "Unknown command line argument: " << argStr << "\n";
             exit(1);
         }
@@ -521,30 +602,38 @@ void parseCommandLine(int argc, char** argv)
 
 int main(int argc, char** argv)
 {
-	printf("LinCity started\n");
+    printf("LinCity started\n");
     int result = 0;
 
 #ifndef DEBUG //in debug mode we wanna have a backtrace
-    try {
-        std::cout << "Starting " << PACKAGE_NAME << " (version " << PACKAGE_VERSION << ")...\n";
+    try
+    {
+        std::cout << "Starting " << PACKAGE_NAME << " (version "
+                << PACKAGE_VERSION << ")...\n";
 #else
         std::cout << "Starting " << PACKAGE_NAME << " (version " << PACKAGE_VERSION << ") in Debug Mode...\n";
 #endif
         initPhysfs(argv[0]);
 
-        if( getConfig()->language != "autodetect" ){
+        if (getConfig()->language != "autodetect")
+        {
             setenv("LINCITY_LANG", getConfig()->language.c_str(), false);
         }
         dictionaryManager = new tinygettext::DictionaryManager();
         dictionaryManager->set_charset("UTF-8");
         dictionaryManager->add_directory("locale");
-        std::cout << "Language is \"" << dictionaryManager->get_language() << "\".\n";
+        std::cout << "Language is \"" << dictionaryManager->get_language()
+                << "\".\n";
 
 #ifndef DEBUG
-    } catch(std::exception& e) {
+    }
+    catch (std::exception& e)
+    {
         std::cerr << "Unexpected exception: " << e.what() << "\n";
         return 1;
-    } catch(...) {
+    }
+    catch (...)
+    {
         std::cerr << "Unexpected exception.\n";
         return 1;
     }
@@ -552,19 +641,22 @@ int main(int argc, char** argv)
     parseCommandLine(argc, argv); // Do not use getConfig() before parseCommandLine for anything command line might change.
 
     fast_time_for_year = getConfig()->quickness;
-    fprintf(stderr," fast = %i\n", fast_time_for_year);
+    fprintf(stderr, " fast = %i\n", fast_time_for_year);
 
 // in debug mode we want a backtrace of the exceptions so we don't catch them
 #ifndef DEBUG
-    try {
+    try
+    {
 #endif
-        xmlInitParser ();
-        if(SDL_Init(SDL_INIT_EVERYTHING) < 0) {
+        xmlInitParser();
+        if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
+        {
             std::stringstream msg;
             msg << "Couldn't initialize SDL: " << SDL_GetError();
             throw std::runtime_error(msg.str());
         }
-        if(TTF_Init() < 0) {
+        if (TTF_Init() < 0)
+        {
             std::stringstream msg;
             msg << "Couldn't initialize SDL_ttf: " << SDL_GetError();
             throw std::runtime_error(msg.str());
@@ -578,10 +670,14 @@ int main(int argc, char** argv)
         mainLoop();
         getConfig()->save();
 #ifndef DEBUG
-    } catch(std::exception& e) {
+    }
+    catch (std::exception& e)
+    {
         std::cerr << "Unexpected exception: " << e.what() << "\n";
         result = 1;
-    } catch(...) {
+    }
+    catch (...)
+    {
         std::cerr << "Unexpected exception.\n";
         result = 1;
     }
@@ -589,15 +685,16 @@ int main(int argc, char** argv)
     delete painter;
     delete fontManager;
     delete texture_manager;
-    if(TTF_WasInit())
+    if (TTF_WasInit())
         TTF_Quit();
-    if(SDL_WasInit(0))
+    if (SDL_WasInit(0))
         SDL_Quit();
     xmlCleanupParser();
     delete dictionaryManager;
     dictionaryManager = 0;
     PHYSFS_deinit();
-    if( restart ){
+    if (restart)
+    {
 #ifdef WIN32
         //Windows has a Problem with Whitespaces.
         std::string fixWhiteSpaceInPathnameProblem;
@@ -606,12 +703,11 @@ int main(int argc, char** argv)
         fixWhiteSpaceInPathnameProblem+="\"";
         execlp( argv[0], fixWhiteSpaceInPathnameProblem.c_str(), (char *) NULL );
 #else
-        execlp( argv[0], argv[0], (char *) NULL );
+        execlp(argv[0], argv[0], (char *) NULL);
 #endif
     }
     return result;
 }
-
 
 /** @file lincity-ng/main.cpp */
 
